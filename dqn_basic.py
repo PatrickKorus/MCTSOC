@@ -1,16 +1,5 @@
 """
-import gym
-
-env = gym.make("Pendulum-v0")
-observation = env.reset()
-for _ in range(1000):
-    env.render()
-    action = env.action_space.sample()  # your agent here (this takes random actions)
-    observation, reward, done, info = env.step(action)
-
-    if done:
-        observation = env.reset()
-env.close()
+Also based on this: https://medium.com/@ts1829/solving-mountain-car-with-q-learning-b77bf71b1de2
 """
 
 
@@ -29,7 +18,6 @@ from tensorboardX import SummaryWriter
 from datetime import datetime
 import glob, os
 
-from utils.model import DeterministicModel
 
 env = gym.make('MountainCar-v0')
 run_tag = "alternative_lr_adaption"
@@ -37,43 +25,6 @@ env.seed(1); torch.manual_seed(1); np.random.seed(1)
 PATH = "tboardlogs/"#glob.glob(os.path.expanduser('~/tboardlogs/'))[0]
 writer = SummaryWriter('tboardlogs/{}_{}'.format(datetime.now().strftime('%b%d_%H-%M-%S'), run_tag))
 
-"""
-max_position = -.4
-positions = np.ndarray([0,2])
-rewards = []
-successful = []
-for episode in range(1000):
-    running_reward = 0
-    env.reset()
-    done = False
-    for i in range(200):
-        state, reward, done, _ = env.step(np.random.randint(0,3))
-        # Give a reward for reaching a new maximum position
-        if state[0] > max_position:
-            max_position = state[0]
-            positions = np.append(positions, [[episode, max_position]], axis=0)
-            running_reward += 10
-        else:
-            running_reward += reward
-        if done:
-            if state[0] >= 0.5:
-                successful.append(episode)
-            rewards.append(running_reward)
-            break
-
-print('Furthest Position: {}'.format(max_position))
-plt.figure(1, figsize=[10,5])
-plt.subplot(211)
-plt.plot(positions[:,0], positions[:,1])
-plt.xlabel('Episode')
-plt.ylabel('Furthest Position')
-plt.subplot(212)
-plt.plot(rewards)
-plt.xlabel('Episode')
-plt.ylabel('Reward')
-plt.show()
-print('successful episodes: {}'.format(np.count_nonzero(successful)))
-"""
 
 # I tried different weight initializations but found they did not perform well.
 def weights_init(m):
