@@ -67,6 +67,7 @@ for episode in trange(num_epochs):
                                        clipping=False,
                                        clipping_factor=1.0,
                                        return_info=True)
+    memory.append(new_data)
 
     # train
     # prepare data
@@ -97,7 +98,6 @@ for episode in trange(num_epochs):
     writer.add_scalar('data/sum_of_rewards', info["sum_of_rewards"].mean(), episode)
     max_pos = (max(np.stack(new_data.sample().state)[:, 0]))
     writer.add_scalar('data/max_position', max_pos, episode)
-    memory.append(new_data)
     writer.add_scalar('debug/memory_size', len(memory), episode)
 
 writer.close()
