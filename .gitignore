@@ -132,3 +132,6 @@ dmypy.json
 
 tboardlogs/
 tboardlogs/*
+
+# plots
+*.png

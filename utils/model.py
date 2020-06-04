@@ -1,5 +1,5 @@
 """
-Taken from here https://github.com/transedward/pytorch-dqn/blob/master/dqn_model.py
+Based on this https://github.com/transedward/pytorch-dqn/blob/master/dqn_model.py
 """
 
 import torch
