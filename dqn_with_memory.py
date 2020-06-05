@@ -23,7 +23,7 @@ def tuple_to_torch(tuple, requires_grad=False):
 
 
 env = gym.make('MountainCar-v0')
-run_tag = "reimplemented_01"
+run_tag = "reimplemented_02_new_error"
 env.seed(1); torch.manual_seed(1); np.random.seed(1)
 PATH = "tboardlogs/"#glob.glob(os.path.expanduser('~/tboardlogs/'))[0]
 writer = SummaryWriter('tboardlogs/{}_{}'.format(datetime.now().strftime('%b%d_%H-%M-%S'), run_tag))
@@ -33,17 +33,17 @@ policy = DeterministicModel(
     in_features=env.observation_space.shape[0],
     num_actions=env.action_space.n,
 )
-learning_rate = 0.01        # optimizer lr
+learning_rate = 0.001        # optimizer lr
 num_epochs = 1000           # total iterations
 epsilon = 0.5               # epsilon greedy param
 batch_size = 2              # number of rollouts
 train_batch_size = 800      # number of states used for batch update of policy
 gamma = 0.99                # discount factor
 loss_fn = nn.MSELoss()
-optimizer = optim.SGD(policy.parameters(), lr=learning_rate)
+optimizer = optim.Adam(policy.parameters(), lr=learning_rate)
 # scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.9)
 sampler = Sampler(env=env)
-optimizer_steps = 5
+optimizer_steps = 1
 memory = Memory(max_size=1600)
 
 for episode in trange(num_epochs):
@@ -76,21 +76,22 @@ for episode in trange(num_epochs):
     actions = tuple_to_torch(batch.action)
     next_states = tuple_to_torch(batch.next_state)
     rewards = tuple_to_torch(batch.reward)
+    dones = tuple_to_torch(batch.done)
+
+    # define target
+    q1 = policy(Variable(next_states))
+    q1_max, _ = torch.max(q1, -1)
+    q_target = rewards + gamma * q1_max.detach() * (1-dones)
 
     for it in range(optimizer_steps):
-        # define target
-        q = policy(Variable(states))
-        q_target = q.clone().data
-        q1 = policy(Variable(next_states))
-        q1_max, _ = torch.max(q1, -1)
-        for i in range(min(train_batch_size, len(q_target))):
-            q_target[i, int(actions[i])] = rewards[i] + torch.mul(q1_max[i].detach(), gamma)
+        optimizer.zero_grad()
+
 
         # compute loss; fit network
-        loss = loss_fn(q, q_target)
+        q_policy = policy(Variable(states)).gather(1, actions.unsqueeze(1).type(torch.int64)).squeeze(1)
+        loss = loss_fn(q_policy, q_target)
         writer.add_scalar("data/optimizer_loss", loss, episode * optimizer_steps + it)
-        policy.zero_grad()
-        q = policy(states)
+
         loss.backward()
         optimizer.step()
 
