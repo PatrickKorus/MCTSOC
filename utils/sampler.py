@@ -1,6 +1,4 @@
 import time
-
-#from quanser_robots import GentlyTerminating
 from gym import Env
 from utils.memory import Memory
 import numpy as np
