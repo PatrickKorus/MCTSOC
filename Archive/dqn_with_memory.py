@@ -23,6 +23,9 @@ def tuple_to_torch(tuple, requires_grad=False):
 
 
 env = gym.make('MountainCar-v0')
+
+
+
 run_tag = "reimplemented_02_new_error"
 env.seed(1); torch.manual_seed(1); np.random.seed(1)
 PATH = "tboardlogs/"#glob.glob(os.path.expanduser('~/tboardlogs/'))[0]
@@ -35,12 +38,12 @@ policy = DeterministicModel(
 )
 learning_rate = 0.001        # optimizer lr
 num_epochs = 1000           # total iterations
-epsilon = 0.5               # epsilon greedy param
-batch_size = 2              # number of rollouts
+epsilon = 0.1               # epsilon greedy param
+batch_size = 2               # number of rollouts
 train_batch_size = 800      # number of states used for batch update of policy
 gamma = 0.99                # discount factor
 loss_fn = nn.MSELoss()
-optimizer = optim.Adam(policy.parameters(), lr=learning_rate)
+optimizer = optim.SGD(policy.parameters(), lr=learning_rate)
 # scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=1, gamma=0.9)
 sampler = Sampler(env=env)
 optimizer_steps = 1
