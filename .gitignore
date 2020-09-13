@@ -135,3 +135,7 @@ tboardlogs/*
 
 # plots
 *.png
+
+# Archive
+archive/
+
