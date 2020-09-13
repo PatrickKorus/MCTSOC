@@ -1,12 +1,15 @@
 # MCTSOC: Monte Carlo Tree Search in Optimal Control
 
-This repository contains a Series of Experiments involving Monte Carlo Tree Search algorithms in the 
-context of Optimal Control Tasks. They are Part of my Bachelor Thesis:
+This repository contains a series of experiments involving Monte Carlo Tree Search (MCTS) algorithms in the 
+context of Optimal Control tasks. They are part of my Bachelor Thesis:
 
-#### [An Evaluation of MCTS Methods for Continuous Control Tasks](link to pdf #TODO) 
+#### [An Evaluation of MCTS Methods for Continuous Control Tasks](https://github.com/PatrickKorus/muzero-general) 
 
-Among the dependencies are several variations of [muzero-general](https://github.com/werner-duvaud/muzero-general) which
-can be found in the several branches of [my forg](https://github.com/PatrickKorus/muzero-general).
+In the first part of the experiments we look at pure mcts which uses 
+[this implementation](https://github.com/PatrickKorus/mcts-general).
+The second part uses several variations of [muzero-general](https://github.com/werner-duvaud/muzero-general) which
+can be found in the branches of [my forg](https://github.com/PatrickKorus/muzero-general). 
+
 
 ## Dependencies
 
@@ -17,8 +20,11 @@ by running
 pip install -r requirements.txt
 ```
 
+I recommend using a clean virtual environment, see conda.
+
 ## How to run
 
 ```python
-# TODO: explain how to run experiments
+# TODO: Explain how to run experiments
+# TODO: Link to PDF
 ```
