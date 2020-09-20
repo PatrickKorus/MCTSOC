@@ -1,7 +1,8 @@
 import gym
 from mcts_general.common.wrapper import DiscreteActionWrapper
 from mcts_general.config import MCTSContinuousAgentConfig, MCTSAgentConfig
-from mcts_general.game import DiscreteGymGame, ContinuousGymGame, GymGameDoingMultipleStepsInSimulations
+from mcts_general.game import DiscreteGymGame, ContinuousGymGame, GymGameDoingMultipleStepsInSimulations, \
+    PendulumGameWithEngineeredMacroActions
 
 from common.cartpole_continuous import ContinuousCartPoleEnv
 from mcts_general_experiments.mcts_experiments_api import MCTSExperiment
@@ -29,7 +30,7 @@ all_experiments.append(MCTSExperiment(tag, mountaincar_discrete_default, default
 # continuous games
 tag = "continuous"
 
-default_config = MCTSAgentConfig()
+default_config = MCTSContinuousAgentConfig()
 # default_config.do_roll_outs = False
 
 cartpole_continuous_default = ContinuousGymGame(
@@ -72,4 +73,7 @@ for n in [2, 4, 8]:
     all_experiments.append(MCTSExperiment(tag, pendulum_discrete_default_n_time, default_config))
     all_experiments.append(MCTSExperiment(tag, mountaincar_discrete_default_n_time, default_config))
 
+# engineered macro actions
+pendulum_with_engineered_actions = PendulumGameWithEngineeredMacroActions(num_actions=2, action_damping=1.0)
+all_experiments.append(MCTSExperiment('engineered_actions', pendulum_with_engineered_actions, default_config))
 # TODO: variation of theta and alpha in SPW...

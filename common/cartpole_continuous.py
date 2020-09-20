@@ -68,6 +68,7 @@ class ContinuousCartPoleEnv(gym.Env):
         # assert self.action_space.contains(action), \
         #     "%r (%s) invalid" % (action, type(action))
         # Cast action to float to strip np trappings
+        action = action[0]  # to make consistent with pendulum
         force = self.force_mag * float(action)
         self.state = self.stepPhysics(force)
         x, x_dot, theta, theta_dot = self.state

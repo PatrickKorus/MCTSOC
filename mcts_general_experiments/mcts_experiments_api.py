@@ -50,11 +50,24 @@ class MCTSExperiment:
             result.append({'state': state, 'reward': reward, 'done': done, 'max_tree_depth': info['max_tree_depth']})
         return pd.DataFrame(result)
 
-    def seed(self, seed):
-        self.game.seed(seed)
+    @property
+    def seed(self):
+        return self.game.get_seed()
 
-    def num_simulations(self, num_simulations):
-        self.agent.mcts.config.num_simulations = num_simulations
+    @seed.setter
+    def seed(self, seed):
+        self.game.set_seed(seed)
+
+    @property
+    def num_simulations(self):
+        return self.agent.mcts.config.num_simulations
+
+    @num_simulations.setter
+    def num_simulations(self, num_sim):
+        self.agent.mcts.config.num_simulations = num_sim
+
+    def get_copy(self):
+        return MCTSExperiment(self.tag, self.game.get_copy(), deepcopy(self.agent.config))
 
 
 def run_set_of_experiments(
@@ -66,35 +79,64 @@ def run_set_of_experiments(
     rand.seed(0)
     seeds = rand.randint(0, 1e5, size=num_of_seeds)
 
+    experiment_queue = []
     for seed in seeds:
         for num_sim in num_simulations_list:
-            it = 0
             for experiment in experiments:
-                it += 1
-                try:
-                    game = experiment.game
-                    path = '{}/{}'.format(game, experiment.tag)
-                    ensure_path(path)
-                    if it == 1:
-                        dump('{}/config.dump'.format(path), experiment.agent.config)
+                exp = experiment.get_copy()
+                exp.seed = int(seed)
+                exp.num_simulations = num_sim
+                experiment_queue.append(exp)
 
-                    print('starting experiment {} with {} simulations and seed {}.'.format(experiment.tag, num_sim, seed))
-                    tic = datetime.now()
-                    experiment.seed(seed)
-                    experiment.num_simulations(num_sim)
-                    dump_target = '{}/{}_{}.dump'.format(path, seed, num_sim)
-                    if os.path.isfile(dump_target):
-                        print("{} exists. Skipping...".format(dump_target))
-                        continue
+    for experiment in experiment_queue:
+        path = '{}/{}'.format(experiment.game, experiment.tag)
+        ensure_path(path)
+        dump('{}/config.dump'.format(path), experiment.agent.config)
 
-                    result = experiment.run()
-                    result['seed'] = seed
-                    result['num_simulations'] = num_sim
-                    result.to_pickle(dump_target)
-                    toc = datetime.now()
-                    print('done, time: ', toc - tic)
-                except Exception as e:
-                    warning('Experiment {} with {} failed due to {}!'.format(experiment, experiment.game, e))
+        print('starting experiment {} on {} with {} simulations and seed {}.'.format(
+            experiment.tag,
+            experiment.game,
+            experiment.num_simulations,
+            experiment.seed))
+        tic = datetime.now()
+        dump_target = '{}/{}_{}.dump'.format(path, experiment.seed, experiment.num_simulations)
+        if os.path.isfile(dump_target):
+            print("{} exists. Skipping...".format(dump_target))
+            continue
+
+        result = experiment.run()
+        result['seed'] = experiment.seed
+        result['num_simulations'] = experiment.num_simulations
+        result.to_pickle(dump_target)
+        toc = datetime.now()
+        print('done, time: ', toc - tic)
+
+
+def run_experiment_and_store_results(experiment):
+    try:
+        game = experiment.game
+        path = '{}/{}'.format(game, experiment.tag)
+        ensure_path(path)
+        dump('{}/config.dump'.format(path), experiment.agent.config)
+
+        print('starting experiment {} with {} simulations and seed {}.'.format(
+            experiment.tag,
+            experiment.num_simulations,
+            experiment.seed))
+        tic = datetime.now()
+        dump_target = '{}/{}_{}.dump'.format(path, experiment.seed, experiment.num_simulations)
+        if os.path.isfile(dump_target):
+            print("{} exists. Skipping...".format(dump_target))
+            return
+
+        result = experiment.run()
+        result['seed'] = experiment.seed
+        result['num_simulations'] = experiment.num_simulations
+        result.to_pickle(dump_target)
+        toc = datetime.now()
+        print('done, time: ', toc - tic)
+    except Exception as e:
+        warning('Experiment {} with {} failed due to {}!'.format(experiment, experiment.game, e))
 
 
 def collect_set_of_experiments(
