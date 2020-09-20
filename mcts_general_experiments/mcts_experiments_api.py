@@ -19,12 +19,13 @@ from utils.basic_io import ensure_path, list_files, dump, load
 
 class MCTSExperiment:
 
-    def __init__(self, game: DeepCopyableGame, config: MCTSAgentConfig, continuous: bool):
+    def __init__(self, tag: str, game: DeepCopyableGame, config: MCTSAgentConfig):
         self.game = game
+        self.tag = tag
 
-        if continuous:
-            assert isinstance(game, ContinuousGymGame), 'Game must be continuous!'
-            assert isinstance(config, MCTSContinuousAgentConfig), 'Config must be suited for continuous agent!'
+        if isinstance(game, ContinuousGymGame):
+            assert isinstance(config, MCTSContinuousAgentConfig), \
+                'Config must be suited for continuous game {}!'.format(game)
             self.agent = ContinuousMCTSAgent(config)
         else:
             self.agent = MCTSAgent(config)
@@ -49,43 +50,51 @@ class MCTSExperiment:
             result.append({'state': state, 'reward': reward, 'done': done, 'max_tree_depth': info['max_tree_depth']})
         return pd.DataFrame(result)
 
+    def seed(self, seed):
+        self.game.seed(seed)
+
+    def num_simulations(self, num_simulations):
+        self.agent.mcts.config.num_simulations = num_simulations
+
 
 def run_set_of_experiments(
-        tag,
-        game_constructor,
-        default_config: MCTSAgentConfig,
         num_of_seeds: int,
-        continuous: bool,
+        experiments: typing.List[MCTSExperiment],
         num_simulations_list: typing.List[int] = [10, 50, 100, 200, 400, 800, 1600, 3200]
 ):
     rand = np.random
     rand.seed(0)
     seeds = rand.randint(0, 1e5, size=num_of_seeds)
-    game = game_constructor(0)
-    path = '{}/{}'.format(game, tag)
-    ensure_path(path)
-    dump('{}/config.dump'.format(path), default_config)
 
-    for num_sim in num_simulations_list:
-        for seed in seeds:
-            print('starting experiment', tag, num_sim, seed)
-            tic = datetime.now()
-            config = deepcopy(default_config)
-            config.num_simulations = num_sim
-            game = game_constructor(int(seed))
-            experiment = MCTSExperiment(game, config, continuous)
+    for seed in seeds:
+        for num_sim in num_simulations_list:
+            it = 0
+            for experiment in experiments:
+                it += 1
+                try:
+                    game = experiment.game
+                    path = '{}/{}'.format(game, experiment.tag)
+                    ensure_path(path)
+                    if it == 1:
+                        dump('{}/config.dump'.format(path), experiment.agent.config)
 
-            dump_target = '{}/{}_{}.dump'.format(path, seed, num_sim)
-            if os.path.isfile(dump_target):
-                print("{} exists. Skipping...".format(dump_target))
-                continue
+                    print('starting experiment {} with {} simulations and seed {}.'.format(experiment.tag, num_sim, seed))
+                    tic = datetime.now()
+                    experiment.seed(seed)
+                    experiment.num_simulations(num_sim)
+                    dump_target = '{}/{}_{}.dump'.format(path, seed, num_sim)
+                    if os.path.isfile(dump_target):
+                        print("{} exists. Skipping...".format(dump_target))
+                        continue
 
-            result = experiment.run()
-            result['seed'] = seed
-            result['num_simulations'] = num_sim
-            result.to_pickle(dump_target)
-            toc = datetime.now()
-            print('done, time: ', toc - tic)
+                    result = experiment.run()
+                    result['seed'] = seed
+                    result['num_simulations'] = num_sim
+                    result.to_pickle(dump_target)
+                    toc = datetime.now()
+                    print('done, time: ', toc - tic)
+                except Exception as e:
+                    warning('Experiment {} with {} failed due to {}!'.format(experiment, experiment.game, e))
 
 
 def collect_set_of_experiments(
@@ -107,17 +116,4 @@ def collect_set_of_experiments(
 
 
 if __name__ == '__main__':
-    config = MCTSContinuousAgentConfig()
-    config.do_roll_outs = False
-
-    game_const = lambda seed: ContinuousGymGame(env=gym.make('Pendulum-v0'), seed=seed, mu=1, sigma=1.5)
-
-    run_set_of_experiments(
-        tag='initial_test',
-        game_constructor=game_const,
-        default_config=config,
-        num_of_seeds=3,
-        continuous=True,
-    )
-    collect_set_of_experiments('Pendulum-v0/initial_test')
-
+    pass
