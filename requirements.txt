@@ -1,2 +1,5 @@
-
-git+git://github.com/PatrickKorus/mcts-general@master#egg=mcts-general
+gym==0.17.2
+mcts-general @ git+git://github.com/PatrickKorus/mcts-general@master
+numpy
+pandas
+tqdm==4.49.0
