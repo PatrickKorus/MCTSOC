@@ -93,9 +93,9 @@ def get_full_experiments_queue(
     return experiment_queue
 
 
-def run_experiment_and_store_results(experiment):
+def run_experiment_and_store_results(experiment, result_path='result/'):
     try:
-        path = '{}/{}'.format(experiment.game, experiment.tag)
+        path = '{}/{}/{}'.format(result_path, experiment.game, experiment.tag)
         ensure_path(path)
         dump('{}/config.dump'.format(path), experiment.agent.config)
 

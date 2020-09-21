@@ -139,3 +139,6 @@ tboardlogs/*
 # Archive
 archive/
 archive/*
+
+results/
+results/*
