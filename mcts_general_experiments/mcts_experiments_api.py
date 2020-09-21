@@ -1,3 +1,5 @@
+from multiprocessing import Pool
+
 import os
 from logging import warning
 
@@ -70,9 +72,9 @@ class MCTSExperiment:
         return MCTSExperiment(self.tag, self.game.get_copy(), deepcopy(self.agent.config))
 
 
-def run_set_of_experiments(
-        num_of_seeds: int,
+def get_full_experiments_queue(
         experiments: typing.List[MCTSExperiment],
+        num_of_seeds: int = 3,
         num_simulations_list: typing.List[int] = [10, 50, 100, 200, 400, 800, 1600, 3200]
 ):
     rand = np.random
@@ -88,7 +90,11 @@ def run_set_of_experiments(
                 exp.num_simulations = num_sim
                 experiment_queue.append(exp)
 
-    for experiment in experiment_queue:
+    return experiment_queue
+
+
+def run_experiment_and_store_results(experiment):
+    try:
         path = '{}/{}'.format(experiment.game, experiment.tag)
         ensure_path(path)
         dump('{}/config.dump'.format(path), experiment.agent.config)
@@ -102,31 +108,6 @@ def run_set_of_experiments(
         dump_target = '{}/{}_{}.dump'.format(path, experiment.seed, experiment.num_simulations)
         if os.path.isfile(dump_target):
             print("{} exists. Skipping...".format(dump_target))
-            continue
-
-        result = experiment.run()
-        result['seed'] = experiment.seed
-        result['num_simulations'] = experiment.num_simulations
-        result.to_pickle(dump_target)
-        toc = datetime.now()
-        print('done, time: ', toc - tic)
-
-
-def run_experiment_and_store_results(experiment):
-    try:
-        game = experiment.game
-        path = '{}/{}'.format(game, experiment.tag)
-        ensure_path(path)
-        dump('{}/config.dump'.format(path), experiment.agent.config)
-
-        print('starting experiment {} with {} simulations and seed {}.'.format(
-            experiment.tag,
-            experiment.num_simulations,
-            experiment.seed))
-        tic = datetime.now()
-        dump_target = '{}/{}_{}.dump'.format(path, experiment.seed, experiment.num_simulations)
-        if os.path.isfile(dump_target):
-            print("{} exists. Skipping...".format(dump_target))
             return
 
         result = experiment.run()
@@ -134,7 +115,12 @@ def run_experiment_and_store_results(experiment):
         result['num_simulations'] = experiment.num_simulations
         result.to_pickle(dump_target)
         toc = datetime.now()
-        print('done, time: ', toc - tic)
+        print('Done experiment {} on {} with {} simulations and seed {}. Time:'.format(
+            experiment.tag,
+            experiment.game,
+            experiment.num_simulations,
+            experiment.seed,
+            toc - tic))
     except Exception as e:
         warning('Experiment {} with {} failed due to {}!'.format(experiment, experiment.game, e))
 
