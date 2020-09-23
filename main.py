@@ -3,7 +3,7 @@ from tqdm import tqdm
 from mcts_general_experiments.all_experiments import get_all_experiments
 from mcts_general_experiments.mcts_experiments_api import get_full_experiments_queue, run_experiment_and_store_results
 
-NUM_THREADS = 4
+NUM_THREADS = 8
 
 
 def get_process_subset(list, process_id, number_of_processes):
@@ -23,13 +23,13 @@ def worker(process_id):
         run_experiment_and_store_results(experiment)
 
 
-def main(number_of_processes):
+def main():
 
     # for proc_id in range(4):
     #     worker(proc_id)
-    with Pool(number_of_processes) as pool:
-        pool.map(func=worker, iterable=[0, 1, 2, 3])
+    with Pool(NUM_THREADS) as pool:
+        pool.map(func=worker, iterable=range(NUM_THREADS))
 
 
 if __name__ == '__main__':
-    main(4)
+    main()
