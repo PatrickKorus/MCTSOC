@@ -142,3 +142,5 @@ archive/*
 
 results/
 results/*
+
+*.out
