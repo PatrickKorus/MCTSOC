@@ -3,6 +3,7 @@ from multiprocessing import Pool
 import os
 from logging import warning
 
+import sys
 from datetime import time, date, datetime
 
 import gym
@@ -141,6 +142,19 @@ def collect_set_of_experiments(
         except EOFError as e:
             warning("{} couldn't be read".format(file))
     return df, config
+
+
+def collect_all_results(path, file_type):
+
+    files = os.listdir(path)
+    result = pd.DataFrame()
+    for file in files:
+        sub_path = path + '/' + file
+        if os.path.isdir(sub_path):
+            result = result.append(collect_all_results(sub_path, file_type))
+        else:
+            result = result.append(collect_set_of_experiments(path))
+    return result
 
 
 if __name__ == '__main__':
