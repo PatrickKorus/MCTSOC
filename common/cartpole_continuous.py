@@ -1,3 +1,8 @@
+"""
+Taken from muzero_general continuous
+"""
+
+
 import gym
 import math
 import numpy as np
@@ -8,6 +13,7 @@ class ContinuousCartPoleEnv(gym.Env):
         'render.modes': ['human', 'rgb_array'],
         'video.frames_per_second': 50
     }
+    max_steps = 200
 
     def __init__(self):
         self.gravity = 9.8
@@ -45,6 +51,7 @@ class ContinuousCartPoleEnv(gym.Env):
         self.state = None
 
         self.steps_beyond_done = None
+        self.step_count = None
 
     def seed(self, seed=None):
         self.np_random, seed = gym.utils.seeding.np_random(seed)
@@ -78,6 +85,9 @@ class ContinuousCartPoleEnv(gym.Env):
             or theta > self.theta_threshold_radians
         done = bool(done)
 
+        if self.step_count >= ContinuousCartPoleEnv.max_steps:
+            done = True
+
         if not done:
             reward = 1.0
         elif self.steps_beyond_done is None:
@@ -99,6 +109,7 @@ class ContinuousCartPoleEnv(gym.Env):
     def reset(self):
         self.state = self.np_random.uniform(low=-0.05, high=0.05, size=(4,))
         self.steps_beyond_done = None
+        self.step_count = 0
         return np.array(self.state)
 
     def render(self, mode='human'):

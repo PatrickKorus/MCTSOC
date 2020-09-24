@@ -76,7 +76,7 @@ class MCTSExperiment:
 def get_full_experiments_queue(
         experiments: typing.List[MCTSExperiment],
         num_of_seeds: int = 3,
-        num_simulations_list: typing.List[int] = [10, 50, 100, 200, 400, 800, 1600, 3200]
+        num_simulations_list: typing.List[int] = [5, 12, 25, 50, 100, 200, 400, 800, 1600] # removed 3200
 ):
     rand = np.random
     rand.seed(0)
@@ -144,7 +144,7 @@ def collect_set_of_experiments(
     return df, config
 
 
-def collect_all_results(path, file_type):
+def collect_all_results(path, file_type='.dump'):
 
     files = os.listdir(path)
     result = pd.DataFrame()
@@ -153,7 +153,13 @@ def collect_all_results(path, file_type):
         if os.path.isdir(sub_path):
             result = result.append(collect_all_results(sub_path, file_type))
         else:
-            result = result.append(collect_set_of_experiments(path))
+            [environment, tag] = path.split('/')[-2:]
+            experiment_result, config = collect_set_of_experiments(path)
+            experiment_result['env'] = environment
+            experiment_result['tag'] = tag
+            # experiment_result['config'] = config
+            result = result.append(experiment_result)
+
     return result
 
 
