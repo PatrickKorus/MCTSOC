@@ -86,13 +86,13 @@ def get_all_experiments():
     for n in [2, 4, 8]:
         tag = 'time_step_skipping_x{}_also_in_acting'.format(n)
 
-        cartpole_discrete_default_n_time = DiscreteGymGame(
+        cartpole_discrete_default_n_time_in_acting = DiscreteGymGame(
             env=ManipulatedTimeDiscretization(
                 gym.make('CartPole-v0'),
                 number_of_time_steps_to_scip=n)
         )  # v1 just has longer periods and higher reward threshold
 
-        pendulum_discrete_default_n_time = DiscreteGymGame(
+        pendulum_discrete_default_n_time_in_acting = DiscreteGymGame(
             env=ManipulatedTimeDiscretization(
                 DiscreteActionWrapper(
                     gym.make('Pendulum-v0'),
@@ -101,15 +101,15 @@ def get_all_experiments():
                 number_of_time_steps_to_scip=n)
         )
 
-        mountaincar_discrete_default_n_time = DiscreteGymGame(
+        mountaincar_discrete_default_n_time_in_acting = DiscreteGymGame(
             env=ManipulatedTimeDiscretization(
                 gym.make('MountainCar-v0'),
                 number_of_time_steps_to_scip=n)
         )
 
-        all_experiments.append(MCTSExperiment(tag, cartpole_discrete_default_n_time, default_config))
-        all_experiments.append(MCTSExperiment(tag, pendulum_discrete_default_n_time, default_config))
-        all_experiments.append(MCTSExperiment(tag, mountaincar_discrete_default_n_time, default_config))
+        all_experiments.append(MCTSExperiment(tag, cartpole_discrete_default_n_time_in_acting, default_config))
+        all_experiments.append(MCTSExperiment(tag, pendulum_discrete_default_n_time_in_acting, default_config))
+        all_experiments.append(MCTSExperiment(tag, mountaincar_discrete_default_n_time_in_acting, default_config))
 
     # engineered macro actions
     # pendulum_with_engineered_actions = PendulumGameWithEngineeredMacroActions(num_actions=2, action_damping=1.0)
@@ -126,6 +126,13 @@ def get_all_experiments():
             all_experiments.append(MCTSExperiment(tag, cartpole_continuous_default, spw_config))
             all_experiments.append(MCTSExperiment(tag, pendulum_continuous_default, spw_config))
 
+    # Mountaincar
+    config = MCTSAgentConfig()
+    config.do_roll_outs = True
+    config.do_roll_out_steps_with_simulation_true = True
+    config.number_of_roll_outs = 10
+    config.max_roll_out_depth = 30
+    MCTSExperiment('deep_rollouts', mountaincar_discrete_default_n_time, config)
 
     return all_experiments
 
