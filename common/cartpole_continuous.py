@@ -85,6 +85,7 @@ class ContinuousCartPoleEnv(gym.Env):
             or theta > self.theta_threshold_radians
         done = bool(done)
 
+        self.step_count += 1
         if self.step_count >= ContinuousCartPoleEnv.max_steps:
             done = True
 
@@ -117,7 +118,7 @@ class ContinuousCartPoleEnv(gym.Env):
         screen_height = 400
 
         world_width = self.x_threshold * 2
-        scale = screen_width /world_width
+        scale = screen_width / world_width
         carty = 100  # TOP OF CART
         polewidth = 10.0
         polelen = scale * 1.0
@@ -162,3 +163,15 @@ class ContinuousCartPoleEnv(gym.Env):
     def close(self):
         if self.viewer:
             self.viewer.close()
+
+if __name__ == '__main__':
+    done = False
+    env = ContinuousCartPoleEnv()
+    state = env.reset()
+    reward_sum = 0
+    while not done:
+        act = env.action_space.sample()
+        obs, rew, done, _ = env.step(act)
+        reward_sum += rew
+    env.close()
+    print(reward_sum)

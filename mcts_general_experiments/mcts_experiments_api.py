@@ -129,9 +129,10 @@ def run_experiment_and_store_results(experiment, result_path='result/'):
 def collect_set_of_experiments(
         path,
         file_type='.dump'):
-
+    # TODO: Raise if directory empty or doesnt exist
     files = list_files(path, file_type=file_type)
     df = pd.DataFrame()
+    config = None
     for file in files:
         try:
             if file == 'config.dump':
@@ -141,6 +142,8 @@ def collect_set_of_experiments(
                 df = df.append(new_df)
         except EOFError as e:
             warning("{} couldn't be read".format(file))
+    if config is None:
+        warning("No config File in {}.".format(path))
     return df, config
 
 
