@@ -16,8 +16,8 @@ def worker(process_id):
     all_experiments = get_all_experiments()
     experiments_queue = get_full_experiments_queue(
         experiments=all_experiments,
-        num_of_seeds=5,
-        num_simulations_list=[5, 12, 25, 50, 100, 200, 400, 800, 1600]  # removed 3200
+        num_of_seeds=4,
+        num_simulations_list=[5, 10, 25, 50, 100, 200, 400, 800, 1600]  # removed 3200
     )
     experiments_queue_process_subset = get_process_subset(experiments_queue, process_id, NUM_THREADS)
     for experiment in tqdm(experiments_queue_process_subset):
