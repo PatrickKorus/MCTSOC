@@ -8,7 +8,7 @@ context of Optimal Control tasks. They are part of my Bachelor Thesis:
 In the first part of the experiments we look at pure mcts which uses 
 [this implementation](https://github.com/PatrickKorus/mcts-general).
 The second part uses several variations of [muzero-general](https://github.com/werner-duvaud/muzero-general) which
-can be found in the branches of [my forg](https://github.com/PatrickKorus/muzero-general). 
+can be found in the branches of [my fork](https://github.com/PatrickKorus/muzero-general). 
 
 
 ## Dependencies
@@ -27,4 +27,9 @@ I recommend using a clean virtual environment, see conda.
 ```python
 # TODO: Explain how to run experiments
 # TODO: Link to PDF
+```
+
+```shell script
+sudo apt-get install texlive texlive-latex-extra texlive-xetex # maybe texlive-xetex suffices?
+sudo apt install texlive-luatex
 ```

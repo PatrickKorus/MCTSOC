@@ -30,6 +30,6 @@ def main():
 
 
 if __name__ == '__main__':
-    # main()
-    df = collect_all_results(path='result')
+    main()
+    # df = collect_all_results(path='result')
     pass

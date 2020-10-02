@@ -144,3 +144,6 @@ result/
 result/*
 
 *.out
+
+plots/
+plots/*

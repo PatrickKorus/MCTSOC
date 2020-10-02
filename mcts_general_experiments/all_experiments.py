@@ -49,6 +49,8 @@ def get_all_experiments():
     # variants
     cartpole_discrete_from_continuous = DiscreteGymGame(
         env=DiscreteActionWrapper(ContinuousCartPoleEnv(), num_actions=2, damping=1.0))
+    cartpole_discrete_from_continuous_more_actions = DiscreteGymGame(
+        env=DiscreteActionWrapper(ContinuousCartPoleEnv(), num_actions=4, damping=1.0))
     pendulum_discrete_more_actions = DiscreteGymGame(
         env=DiscreteActionWrapper(gym.make('Pendulum-v0'), num_actions=4, damping=1.0))
     mountaincar_discrete_fewer_actions = DiscreteGymGame(
@@ -57,6 +59,7 @@ def get_all_experiments():
 
     all_experiments.append(MCTSExperiment('discrete_from_continuous', cartpole_discrete_from_continuous, default_config))
     all_experiments.append(MCTSExperiment('more_actions', pendulum_discrete_more_actions, default_config))
+    all_experiments.append(MCTSExperiment('more_actions', cartpole_discrete_from_continuous_more_actions, default_config))
     all_experiments.append(MCTSExperiment('fewer_actions', mountaincar_discrete_fewer_actions, default_config))
 
     # time discretization in planning
