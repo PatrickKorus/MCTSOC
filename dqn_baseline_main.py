@@ -1,0 +1,4 @@
+from q_learning_baseline.baseline_experiment import run_baseline_experiment
+
+run_baseline_experiment(num_seeds=3)
+
