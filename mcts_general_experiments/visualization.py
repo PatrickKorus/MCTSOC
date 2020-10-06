@@ -20,7 +20,8 @@ def get_total_reward_mean_low_and_high(experiment_df: pd.DataFrame):
 
 
 def plot_total_reward(mean: pd.Series, low: pd.Series, high: pd.Series, title, ax: plt.Axes, yrange=None, label=None):
-    # ax.set_title(title, fontsize=10)
+    # if title:
+    #     ax.set_title(title, fontsize=10)
     # ax.set_xlabel('Num. Simulations', fontsize=9)
     # ax.set_ylabel('Total Reward        ', fontsize=9)
     ax.tick_params(axis='both', which='major', labelsize=7)

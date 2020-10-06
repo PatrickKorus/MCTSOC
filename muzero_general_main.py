@@ -34,8 +34,8 @@ def main(num_seeds):
     q_learning_comparison_config_pendulum.set_tag('q_learning_pendulum')
 
     experiments = [
-        [cart_pole_game_cls, default_config_cartpole],
-        [cart_pole_game_cls, q_learning_comparison_config_cartpole],
+        # [cart_pole_game_cls, default_config_cartpole],
+        # [cart_pole_game_cls, q_learning_comparison_config_cartpole],
         [pendulum_game_cls, default_config_pendulum],
         [pendulum_game_cls, q_learning_comparison_config_pendulum]
     ]
@@ -45,9 +45,12 @@ def main(num_seeds):
             config_updated_seed = deepcopy(config)
             config_updated_seed.seed = int(seed)
             config_updated_seed.set_tag(config_updated_seed.tag + '_' + str(seed))
+            config_updated_seed = 20000
             # if not os.path.exists(config_updated_seed.result_path):
+            pass
+            print(config_updated_seed.seed)
             muzero = MuZero(game_cls_and_config=[game_cls, config_updated_seed])
-            muzero.train(log_in_tensorboard=True)
+            # muzero.train(log_in_tensorboard=True)
 
 
 if __name__ == '__main__':
