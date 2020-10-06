@@ -34,6 +34,7 @@ def plot_total_reward(mean: pd.Series, low: pd.Series, high: pd.Series, title, a
 
 if __name__ == '__main__':
     plt.rc('pgf', texsystem='lualatex')
+    plt.rcParams.update({'figure.autolayout': True})
 
     import matplotlib.pyplot as plt
 
@@ -43,12 +44,12 @@ if __name__ == '__main__':
     # })
 
 
-    for experiment_set in [['Pendulum-v0', 2., [-1500, -900]], ['ContinuousCartPoleEnv', 1., [0,200]]]:
+    for experiment_set in [['Pendulum-v0', 2., [-1500, -900]], ['ContinuousCartPoleEnv', 1., [0,201]]]:
         [env, sigma_factor, yrange] = experiment_set
         for sigma in [0.5, 0.75, 1.0]:
             sigma *= sigma_factor
             row = 0
-            fig, axes = plt.subplots(nrows=4, ncols=4, sharex='all', sharey='all')
+            fig, axes = plt.subplots(nrows=4, ncols=4, sharex='all', sharey='all', figsize=(6, 4.5))
             fig.tight_layout()
             # fig.suptitle('{}, $\sigma={}$'.format(env, sigma))
             for c in [1, 2, 3, 4]:
@@ -56,10 +57,10 @@ if __name__ == '__main__':
                 for alpha in [0.0625, 0.125, 0.25, 0.5]:
                     pad = 5
                     axes[row, 0].set_ylabel('Total Reward')
-                    # axes[row, 0].annotate('$C={}$'.format(c), xy=(0, 0.5), xytext=(-axes[row, 0].yaxis.labelpad - pad, 0),
-                    #             xycoords=axes[row, 0].yaxis.label, textcoords='offset points',
-                    #             ha='right', va='center')
-                    axes[row, col].set_title('$C={}, \\alpha={}$'.format(c, alpha))
+                    axes[row, 0].annotate('$C={}$'.format(c), xy=(0, 0.5), xytext=(-axes[row, 0].yaxis.labelpad - pad, 0),
+                                xycoords=axes[row, 0].yaxis.label, textcoords='offset points',
+                                ha='right', va='center')
+                    axes[0, col].set_title('$\\alpha={}$'.format(alpha))
                     axes[-1, col].set_xlabel('Num. Simulations'.format(c))
                     path = "../result/{}/SPW_alpha_{:1.3f}_C_{}_Sigma_{}".format(env, alpha, c, sigma)
                     print(path)
@@ -83,7 +84,7 @@ if __name__ == '__main__':
     plt.show()
 
     # default pendulum plot
-    fig, axes = plt.subplots(1, 2, figsize=(5, 3), sharex='all')
+    fig, axes = plt.subplots(1, 2, figsize=(5, 2.5), sharex='all')
     fig.tight_layout()
     path = '../result/Pendulum-v0/standard'
     ax = axes[0]
@@ -103,7 +104,7 @@ if __name__ == '__main__':
     ax.set_xlabel('Number of Simulations')
     # ax.set_ylabel('Total Reward')
     ax.set_xlim(0, 3200)
-    ax.set_ylim(0, 200)
+    ax.set_ylim(0, 201)
     experiment_df, _ = collect_set_of_experiments(path)
     mean, low, high = get_total_reward_mean_low_and_high(experiment_df)
     plot_total_reward(mean, low, high, path, ax, label='standard')
@@ -114,7 +115,7 @@ if __name__ == '__main__':
 
     # time discretization
     for with_skipping_in_acting in [True, False]:
-        fig, axes = plt.subplots(1, 2, figsize=(6.5, 4), sharex='all')
+        fig, axes = plt.subplots(1, 2, figsize=(5, 2.5), sharex='all')
         fig.tight_layout()
         path = '../result/Pendulum-v0/standard'
         ax = axes[0]
@@ -160,7 +161,7 @@ if __name__ == '__main__':
         plt.show()
 
     # Mountain Car with skipping
-    fig, ax = plt.subplots(figsize=(3.25, 4), sharex='all')
+    fig, ax = plt.subplots(figsize=(2.5, 2.5), sharex='all')
     fig.tight_layout()
     path = '../result/MountainCar-v0/standard'
     # ax.set_title('MountainCar-v0')
@@ -185,7 +186,7 @@ if __name__ == '__main__':
     plt.show()
 
     # Action Discretization
-    fig, axes = plt.subplots(1, 2, figsize=(5, 3), sharex='all')
+    fig, axes = plt.subplots(1, 2, figsize=(5, 2.5))
     fig.tight_layout()
     ax = axes[0]
     path = '../result/Pendulum-v0/standard'
@@ -211,18 +212,17 @@ if __name__ == '__main__':
     ax.set_title('ContinuousCartPoleEnv')
     ax.set_xlabel('Number of Simulations')
     # ax.set_ylabel('Total Reward')
-    ax.set_xlim(0, 3200)
-    ax.set_ylim(0, 200)
+    ax.set_xlim(0, 600)
+    ax.set_ylim(0, 201)
     experiment_df, _ = collect_set_of_experiments(path)
     mean, low, high = get_total_reward_mean_low_and_high(experiment_df)
     plot_total_reward(mean, low, high, path, ax, label='standard')
 
-    # TODO
     # more actions
-    # path = '../result/ContinuousCartPoleEnv/
-    # experiment_df, _ = collect_set_of_experiments(path)
-    # mean, low, high = get_total_reward_mean_low_and_high(experiment_df)
-    # plot_total_reward(mean, low, high, path, ax, label='standard')
+    path = '../result/ContinuousCartPoleEnv/more_actions'
+    experiment_df, _ = collect_set_of_experiments(path)
+    mean, low, high = get_total_reward_mean_low_and_high(experiment_df)
+    plot_total_reward(mean, low, high, path, ax, label='4 actions')
 
     ax.legend()
 
