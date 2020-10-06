@@ -1,3 +1,4 @@
+import os
 from copy import deepcopy
 
 import numpy
@@ -44,6 +45,7 @@ def main(num_seeds):
             config_updated_seed = deepcopy(config)
             config_updated_seed.seed = int(seed)
             config_updated_seed.set_tag(config_updated_seed.tag + '_' + str(seed))
+            # if not os.path.exists(config_updated_seed.result_path):
             muzero = MuZero(game_cls_and_config=[game_cls, config_updated_seed])
             muzero.train(log_in_tensorboard=True)
 
