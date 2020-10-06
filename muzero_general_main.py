@@ -44,13 +44,11 @@ def main(num_seeds):
         for [game_cls, config] in experiments:
             config_updated_seed = deepcopy(config)
             config_updated_seed.seed = int(seed)
-            config_updated_seed.set_tag(config_updated_seed.tag + '_' + str(seed))
+            config_updated_seed.set_tag(config_updated_seed.tag + '_new_' + str(seed))
             config_updated_seed.training_steps = 20000
             # if not os.path.exists(config_updated_seed.result_path):
-            pass
-            print(config_updated_seed.seed)
             muzero = MuZero(game_cls_and_config=[game_cls, config_updated_seed])
-            # muzero.train(log_in_tensorboard=True)
+            muzero.train(log_in_tensorboard=True)
 
 
 if __name__ == '__main__':
