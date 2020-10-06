@@ -26,12 +26,12 @@ def run_baseline_experiment(num_seeds=1):
                       env=env,
                       learning_rate=5e-4,
                       buffer_size=500 * 200,  # MuZero Buffer Size * Episode Length
-                      learning_starts=100,
+                      learning_starts=1000,
                       # tau: float = 1.0, # hard update
                       train_freq=1,
                       # gradient_steps: int = 1,
                       # n_episodes_rollout: int = -1,
-                      target_update_interval=50,
+                      target_update_interval=500,
                       exploration_fraction=0.1,
                       exploration_initial_eps=1.0,
                       exploration_final_eps=0.02,
@@ -66,7 +66,7 @@ def run_baseline_experiment(num_seeds=1):
             result.append({'seed': seed, 'total reward': total_reward, 'env': str(env), 'total_time_steps': it})
             print({'seed': seed, 'total reward': total_reward, 'env': str(env), 'total_time_steps': it})
     df = pd.DataFrame(result)
-    result_path = 'result_baseline/cartpole_tighter_updates.pkl'
+    result_path = 'result_baseline/pendulum_tighter.pkl'
     ensure_path(result_path)
     df.to_pickle(result_path)
 

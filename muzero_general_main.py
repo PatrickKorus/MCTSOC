@@ -45,7 +45,7 @@ def main(num_seeds):
             config_updated_seed = deepcopy(config)
             config_updated_seed.seed = int(seed)
             config_updated_seed.set_tag(config_updated_seed.tag + '_' + str(seed))
-            config_updated_seed = 20000
+            config_updated_seed.training_steps = 20000
             # if not os.path.exists(config_updated_seed.result_path):
             pass
             print(config_updated_seed.seed)
