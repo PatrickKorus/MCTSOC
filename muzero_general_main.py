@@ -14,23 +14,38 @@ def main(num_seeds):
 
     cart_pole_game_cls = MuZeroCartPoleGame
     pendulum_game_cls = MuZeroPendulumGame
-    games_classes = [cart_pole_game_cls, pendulum_game_cls]
 
-    default_config = MuZeroDefaultConfig()
+    default_config_cartpole = MuZeroDefaultConfig()
+    default_config_cartpole.tag = 'default_cartpole'
+    default_config_pendulum = MuZeroDefaultConfig()
+    default_config_pendulum.support_size = 45
+    default_config_pendulum.observation_shape = (1, 1, 3)
+    default_config_pendulum.tag = 'default_pendulum'
 
-    q_learning_comparison_config = MuZeroDefaultConfig()
-    q_learning_comparison_config.PER = False  # Turn Off Prioritized Replay
-    q_learning_comparison_config.use_last_model_value = False  # Turn Off 'Reanalyze'
+    q_learning_comparison_config_cartpole = deepcopy(default_config_cartpole)
+    q_learning_comparison_config_cartpole.PER = False  # Turn Off Prioritized Replay
+    q_learning_comparison_config_cartpole.use_last_model_value = False  # Turn Off 'Reanalyze'
+    q_learning_comparison_config_cartpole.tag = 'q_learning_cartpole'
 
-    configs = [default_config, q_learning_comparison_config]
+    q_learning_comparison_config_pendulum = deepcopy(default_config_pendulum)
+    q_learning_comparison_config_pendulum.PER = False  # Turn Off Prioritized Replay
+    q_learning_comparison_config_pendulum.use_last_model_value = False  # Turn Off 'Reanalyze'
+    q_learning_comparison_config_pendulum.tag = 'q_learning_pendulum'
+
+    experiments = [
+        [cart_pole_game_cls, default_config_cartpole],
+        [cart_pole_game_cls, q_learning_comparison_config_cartpole],
+        [pendulum_game_cls, default_config_pendulum],
+        [pendulum_game_cls, q_learning_comparison_config_pendulum]
+    ]
 
     for seed in seeds:
-        for game_cls in games_classes:
-            for config in configs:
-                config_updated_seed = deepcopy(config)
-                config_updated_seed.seed = int(seed)
-                muzero = MuZero(game_cls_and_config=[game_cls, config_updated_seed])
-                muzero.train(log_in_tensorboard=True)
+        for [game_cls, config] in experiments:
+            config_updated_seed = deepcopy(config)
+            config_updated_seed.seed = int(seed)
+            config_updated_seed.tag += '_' + str(seed)
+            muzero = MuZero(game_cls_and_config=[game_cls, config_updated_seed])
+            muzero.train(log_in_tensorboard=True)
 
 
 if __name__ == '__main__':

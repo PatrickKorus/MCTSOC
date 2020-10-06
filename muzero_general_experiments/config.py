@@ -60,9 +60,8 @@ class MuZeroDefaultConfig:
         self.fc_policy_layers = [16]  # Define the hidden layers in the policy network
 
         ### Training
-        self.results_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../../results",
-                                         os.path.basename(__file__)[:-3], datetime.datetime.now().strftime(
-                "%Y-%m-%d--%H-%M-%S"))  # Path to store the model weights and TensorBoard logs
+        self.tag = 'default_cartpole'
+        self.results_path = os.path.join("result_muzero/", self.tag)  # Path to store the model weights and TensorBoard logs
         self.save_model = True  # Save the checkpoint in results_path as model.checkpoint
         self.training_steps = 20000  # Total number of training steps (ie weights update according to a batch)
         self.batch_size = 128  # Number of parts of games to train on at each training step
