@@ -94,6 +94,10 @@ class MuZeroDefaultConfig:
         self.training_delay = 0  # Number of seconds to wait after each training step
         self.ratio = 1.5  # Desired training steps per self played step ratio. Equivalent to a synchronous version, training can take much longer. Set it to None to disable it
 
+    def set_tag(self, tag):
+        self.tag = tag
+        self.results_path = os.path.join("result_muzero/", self.tag)
+
     def visit_softmax_temperature_fn(self, trained_steps):
         """
         Parameter to alter the visit count distribution to ensure that the action selection becomes greedier as training progresses.
