@@ -14,8 +14,8 @@ def run_baseline_experiment(num_seeds=1):
     result = []
     envs = ['CartPole-v0', 'Pendulum-v0']
     for seed in seeds:
-        # env = DiscreteActionWrapper(gym.make('Pendulum-v0'), num_actions=2, damping=1.)
-        env = gym.make('Pendulum-v0')
+        env = DiscreteActionWrapper(gym.make('Pendulum-v0'), num_actions=2, damping=1.)
+        # env = gym.make('CartPole-v0')
         env.seed(int(seed))
 
 
