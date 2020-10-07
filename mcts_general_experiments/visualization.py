@@ -37,7 +37,6 @@ if __name__ == '__main__':
     plt.rc('pgf', texsystem='lualatex')
     plt.rcParams.update({'figure.autolayout': True})
 
-    import matplotlib.pyplot as plt
 
     # plt.rcParams.update({
     #     "font.serif": [],  # use latex default serif font

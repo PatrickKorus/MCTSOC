@@ -15,7 +15,7 @@ def run_baseline_experiment(num_seeds=1):
     envs = ['CartPole-v0', 'Pendulum-v0']
     for seed in seeds:
         # env = DiscreteActionWrapper(gym.make('Pendulum-v0'), num_actions=2, damping=1.)
-        env = gym.make('CartPole-v0')
+        env = gym.make('Pendulum-v0')
         env.seed(int(seed))
 
 
@@ -66,7 +66,7 @@ def run_baseline_experiment(num_seeds=1):
             result.append({'seed': seed, 'total reward': total_reward, 'env': str(env), 'total_time_steps': it})
             print({'seed': seed, 'total reward': total_reward, 'env': str(env), 'total_time_steps': it})
     df = pd.DataFrame(result)
-    result_path = 'result_baseline/pendulum_tighter.pkl'
+    result_path = 'result_baseline/pendulum_20k_steps.pkl'
     ensure_path(result_path)
     df.to_pickle(result_path)
 
