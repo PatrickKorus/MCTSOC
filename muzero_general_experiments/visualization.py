@@ -81,7 +81,7 @@ if __name__ == '__main__':
     mean, low, high = get_mean_low_high_from_muzero_results('../result_muzero/q_learning_pendulum_new_{}',)
     plot_total_reward(mean, low, high, 'muzero', ax[0], label='MuZero')
     mean, low, high = get_total_reward_mean_low_and_high_baseline(
-        '../result_baseline/pendulum_tighter.pkl')
+        '../result_baseline/pendulum_20k_steps.pkl')
     plot_total_reward(mean, low, high, None, ax[0], label='DQN')
     ax[0].set_ylim(-1800, -199)
     ax[0].set_xlim(0, 20000)
@@ -97,6 +97,35 @@ if __name__ == '__main__':
     ax[0].legend()
 
     plt_path = '../plots/muzero/muzero_dqn.svg'
+    ensure_path(plt_path)
+    plt.savefig(plt_path)
+
+    fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(5, 2.5))
+    # mean, low, high = get_mean_low_high_from_muzero_results('../result_muzero/default_cartpole_{}',)
+    # plot_total_reward(mean, low, high, 'muzero', ax)
+
+    ax[0].set_xlabel('Number of Training Steps')
+    ax[0].set_ylabel('Total Reward')
+    ax[0].set_title('Pendulum-v0')
+    mean, low, high = get_mean_low_high_from_muzero_results('../result_muzero/default_pendulum_new_{}',)
+    plot_total_reward(mean, low, high, 'muzero', ax[0], label='MuZero')
+    mean, low, high = get_total_reward_mean_low_and_high_baseline(
+        '../result_baseline/pendulum_20k_steps.pkl')
+    plot_total_reward(mean, low, high, None, ax[0], label='DQN')
+    ax[0].set_ylim(-1800, -199)
+    ax[0].set_xlim(0, 20000)
+    ax[1].set_xlabel('Number of Training Steps')
+    ax[1].set_title('CartPole-v0')
+    mean, low, high = get_mean_low_high_from_muzero_results('../result_muzero/default_cartpole_{}',)
+    plot_total_reward(mean, low, high, 'muzero', ax[1], label='MuZero')
+    mean, low, high = get_total_reward_mean_low_and_high_baseline(
+        '../q_learning_baseline/result_baseline/total_rewards_cartpole.pkl')
+    plot_total_reward(mean, low, high, None, ax[1], label='DQN')
+    ax[1].set_xlim(0, 5000)
+    ax[1].set_ylim(0, 201)
+    ax[0].legend()
+
+    plt_path = '../plots/muzero/muzero_dqn_with_reananlyze.svg'
     ensure_path(plt_path)
     plt.savefig(plt_path)
     plt.show()
